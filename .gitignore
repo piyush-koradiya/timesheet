@@ -1,0 +1,6 @@
+.env
+node_modules/*
+winston.log
+temp/*
+thing.json
+package-lock.json
