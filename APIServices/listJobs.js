@@ -30,7 +30,7 @@ const headers = {
   'x-ms-client-session-id': process.env.CLIENT_SESSION_ID,
   'x-ms-client-tenant-id': 'a3ba1793-2843-406e-9ee0-86d3cff47e2c',
   'x-ms-request-method': 'POST',
-  'x-ms-request-url': `/apim/logicflows/${process.env.REQUEST_URL_ID}/triggers/manual/run?api-version=2015-02-01-preview`,
+  'x-ms-request-url': `/apim/logicflows/${process.env.REQUEST_URL_ID_JOB_LIST}/triggers/manual/run?api-version=2015-02-01-preview`,
   'x-ms-user-agent': 'PowerApps/3.23122.15 (Web Player; AppName=9e9ab14c-50bc-4870-b533-2cf927f57b01)'
 };
 
