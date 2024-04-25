@@ -4,3 +4,4 @@ winston.log
 temp/*
 thing.json
 package-lock.json
+output.json
