@@ -7,6 +7,15 @@ const logger = require('../logger/winston');
 
 module.exports = async function submitTimesheet(data) {
   try {
+
+    // check job id is present or not
+    data.tasks.forEach(task => {
+      if (!task.jobId) {
+        logger.info('Job id is not present in the data', data.date);
+        return false;
+      }
+    });
+
     const headers = {
       'authority': 'india-001.azure-apim.net',
       'accept': '*/*',

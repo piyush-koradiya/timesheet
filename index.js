@@ -10,6 +10,7 @@ const openai = require('./AIServices/openai.js');
 const { TIME_LOG_DATE_FORMAT, JOB_API_DATE_FORMAT } = require('./constants');
 const getJobList = require('./APIServices/listJobs');
 const submitTimesheet = require('./APIServices/submitTimesheet');
+const fetchSubmittedLogs = require('./APIServices/fetchSubmittedLogs');
 const logger = require('./logger/winston');
 logger.info('Starting script...');
 
@@ -96,6 +97,7 @@ async function processArray(inputArray) {
 
 const runScript = async () => {
   try {
+    const hoursToCheck = [];
     // convert excel file to json files
     const jsonData = await xlsxjPromise({
       input: "timesheet.xlsx",
@@ -112,14 +114,22 @@ const runScript = async () => {
     const submitTimeSheetPromises = processedArray.map((data) => {
       const hours = data.tasks.reduce((acc, task) => acc + Number(task.hours), 0)
       if (hours < process.env.HOURS_PER_DAY) {
-        logger.info(`Hours for ${data.date} is less than ${process.env.HOURS_PER_DAY}`)
+        logger.info(`Hours for ${data.date} is less than ${process.env.HOURS_PER_DAY}`);
+        hoursToCheck.push(moment(data.date, 'DD/MM/YYYY').format('DD-MMM-YYYY'));
       }
       return submitTimesheet(data)
     })
 
     await Promise.all(submitTimeSheetPromises)
 
-    console.log('Timesheet submitted successfully!!!')
+    logger.info('Timesheet submitted successfully!!!')
+
+    logger.info('Hours to check on following dates:', hoursToCheck);
+
+    const checkHoursPromise = hoursToCheck.map(date => fetchSubmittedLogs(date));
+    await Promise.all(checkHoursPromise);
+    logger.info('Hours have been verified successfully, and everything appears to be in good order.');
+
     return { status: 'success' }
 
   } catch (error) {
